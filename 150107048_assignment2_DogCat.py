@@ -11,11 +11,11 @@ from keras import backend as K
 
 import scipy.io as sio
 
-def make_validation(train_data,train_target):
+def make_test_data(train_data,train_target):
 	test_data=np.zeros(shape=(4000,3,64,64),dtype=np.float32)
 	test_target=np.zeros(shape=(4000,1),dtype=np.float32)
-	print(test_data.dtype)
-	print(test_target.dtype)
+	#print(test_data.dtype)
+	#print(test_target.dtype)
 	j=0
 	cat=dog=0
 	for i in range(len(train_target)):
@@ -33,21 +33,22 @@ def make_validation(train_data,train_target):
 			#test_set[j,]=i 
 			j=j+1
 			if (train_target[i,]==0):
-				cat=cat+1
+					cat=cat+1
 			else :
 				dog=dog+1
 		s=0
 	for i in range(len(test_target)):
 		if test_target[i,]==0 :
 			s =s +1
-	print(s)
+	#print(s)
 	print('Size of testing data is '+ str(test_data.shape))
 	print('Size of testing data target '+ str(test_target.shape))
 	return(test_data,test_target)	
-
+	''' I have made this funtion to make new testing set '''	
 
 
 def load_data(batch_size=500,nb_classes=2,nb_epoch=100):
+	print('... loading data')
 	traindata = sio.loadmat('traindata.mat')
 	trainX = traindata['trainX']
 	trainX = np.reshape(trainX,(trainX.shape[0],3,64,64))
@@ -60,7 +61,26 @@ def load_data(batch_size=500,nb_classes=2,nb_epoch=100):
 	testdata = sio.loadmat('testdata.mat')
 	testX = testdata['testX']
 	testX = np.reshape(testX,(testX.shape[0],3,64,64))
-	(testX,testY)=make_validation(trainX,trainY)
+	(testX,testY)=make_test_data(trainX,trainY)
+
+	trainX=trainX.astype('float32')
+	trainY=trainY.astype('float32')
+	testX=testX.astype('float32')
+	testY=testY.astype('float32')
+
+
+	trainX /= 255
+	testY /= 255
+	print('X train shape:', trainX.shape)
+	print('X test shape:', testX.shape)
+
+	print ('data loaded')
+	###########################################################33
+	pool_size=(2,2)
+	kernel_size0=(1,1)
+	kernel_size1=(3,3)
+	kernel_size2=(4,4)
+
 
 
 
