@@ -82,9 +82,9 @@ def load_data(batch_size=2500,nb_classes=2,nb_epoch=100,nb_filters=(10,20,40)):
 	print ('data loaded')
 	###########################################################
 	pool_size=(2,2)
-	kernel_size0=(1,1)
+	kernel_size0=(3,3)
 	kernel_size1=(3,3)
-	kernel_size2=(4,4)
+	#kernel_size2=(4,4)
 
 	# convert class vectors to binary class matrices					
 	trainY = np_utils.to_categorical(trainY,nb_classes)
@@ -107,7 +107,7 @@ def load_data(batch_size=2500,nb_classes=2,nb_epoch=100,nb_filters=(10,20,40)):
 	#model.add(Convolution2D(nb_filters[2],kernel_size2[0], kernel_size2[1],border_mode='valid'))
 	#model.add(Activation('relu'))
 	#model.add(MaxPooling2D(pool_size=pool_size))
-	model.add(Dropout(0.25))
+	#model.add(Dropout(0.25))
 
 
 	model.add(Flatten())
@@ -120,7 +120,7 @@ def load_data(batch_size=2500,nb_classes=2,nb_epoch=100,nb_filters=(10,20,40)):
 	model.add(Dropout(0.5))
 	
 	model.add(Dense(nb_classes))
-	model.add(Activation('softmax'))
+	model.add(Activation('sigmoid'))
 
 	model.compile(loss='categorical_crossentropy',optimizer='sgd',metrics=['accuracy'])
 
