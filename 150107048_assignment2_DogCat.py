@@ -49,7 +49,7 @@ def make_test_data(train_data,train_target):
 	''' I have made this funtion to make new testing set '''	
 
 
-def load_data(batch_size=500,nb_classes=2,nb_epoch=100,nb_filters=(10,20,40)):
+def load_data(batch_size=2500,nb_classes=2,nb_epoch=100,nb_filters=(10,20,40)):
 	print('... loading data')
 	traindata = sio.loadmat('traindata.mat')
 	trainX = traindata['trainX']
