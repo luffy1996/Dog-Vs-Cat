@@ -104,16 +104,21 @@ def load_data(batch_size=500,nb_classes=2,nb_epoch=100,nb_filters=(10,20,40)):
 	model.add(MaxPooling2D(pool_size=pool_size))
 	#model.add(Activation('relu'))
 	
-	model.add(Convolution2D(nb_filters[2],kernel_size2[0], kernel_size2[1],border_mode='valid'))
-	model.add(Activation('relu'))
-	model.add(MaxPooling2D(pool_size=pool_size))
-	
+	#model.add(Convolution2D(nb_filters[2],kernel_size2[0], kernel_size2[1],border_mode='valid'))
+	#model.add(Activation('relu'))
+	#model.add(MaxPooling2D(pool_size=pool_size))
+	model.add(Dropout(0.25))
+
 
 	model.add(Flatten())
 	model.add(Dense(500))
 	model.add(Activation('relu'))
 	model.add(Dropout(0.5))
 
+	model.add(Dense(50))
+	model.add(Activation('relu'))
+	model.add(Dropout(0.5))
+	
 	model.add(Dense(nb_classes))
 	model.add(Activation('softmax'))
 
