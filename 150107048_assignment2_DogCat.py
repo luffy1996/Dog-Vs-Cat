@@ -5,9 +5,11 @@ import time
 np.random.seed(2001)
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten , Convolution2D, MaxPooling2D
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras import backend as K
+from keras.optimizers import SGD
 
 import scipy.io as sio
 
@@ -47,7 +49,7 @@ def make_test_data(train_data,train_target):
 	''' I have made this funtion to make new testing set '''	
 
 
-def load_data(batch_size=500,nb_classes=2,nb_epoch=100):
+def load_data(batch_size=500,nb_classes=2,nb_epoch=100,nb_filters=(10,20,40)):
 	print('... loading data')
 	traindata = sio.loadmat('traindata.mat')
 	trainX = traindata['trainX']
@@ -64,22 +66,67 @@ def load_data(batch_size=500,nb_classes=2,nb_epoch=100):
 	(testX,testY)=make_test_data(trainX,trainY)
 
 	trainX=trainX.astype('float32')
-	trainY=trainY.astype('float32')
+	trainY=trainY.astype('int32')
 	testX=testX.astype('float32')
-	testY=testY.astype('float32')
+	testY=testY.astype('int32')
 
-
+	train_X= trainX.transpose(0,2,3,1)
+	test_X =testX.transpose(0,2,3,1)
 	trainX /= 255
-	testY /= 255
-	print('X train shape:', trainX.shape)
-	print('X test shape:', testX.shape)
+	testX /= 255
+	train_X /= 255
+	test_X /= 255
+	print('X train shape:', train_X.shape)
+	print('X test shape:', test_X.shape)
 
 	print ('data loaded')
-	###########################################################33
+	###########################################################
 	pool_size=(2,2)
 	kernel_size0=(1,1)
 	kernel_size1=(3,3)
 	kernel_size2=(4,4)
+
+	# convert class vectors to binary class matrices					
+	trainY = np_utils.to_categorical(trainY,nb_classes)
+	testY = np_utils.to_categorical(testY,nb_classes)
+	print(trainX.shape[0])
+
+	model = Sequential()
+	model.add(Convolution2D(nb_filters[0],kernel_size0[0], kernel_size0[1],border_mode='valid',
+		input_shape=(64,64,3)))
+	model.add(Activation('relu'))
+
+	model.add(MaxPooling2D(pool_size=pool_size))
+	#model.add(Activation('relu'))
+
+	model.add(Convolution2D(nb_filters[1] ,kernel_size1[0], kernel_size1[1],border_mode='valid'))
+	model.add(Activation('relu'))
+	model.add(MaxPooling2D(pool_size=pool_size))
+	#model.add(Activation('relu'))
+	
+	model.add(Convolution2D(nb_filters[2],kernel_size2[0], kernel_size2[1],border_mode='valid'))
+	model.add(Activation('relu'))
+	model.add(MaxPooling2D(pool_size=pool_size))
+	
+
+	model.add(Flatten())
+	model.add(Dense(500))
+	model.add(Activation('relu'))
+	model.add(Dropout(0.5))
+
+	model.add(Dense(nb_classes))
+	model.add(Activation('softmax'))
+
+	model.compile(loss='categorical_crossentropy',optimizer='sgd',metrics=['accuracy'])
+
+	model.fit(train_X, trainY, batch_size=batch_size, nb_epoch=nb_epoch,verbose=1, validation_data=(test_X, testY))
+	#verbose explain
+	score = model.evaluate(testX, testY, verbose=0)
+	print('Test score:', score[0])
+	print('Test accuracy:', score[1])
+
+
+
 
 
 
