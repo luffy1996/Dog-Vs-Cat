@@ -79,7 +79,7 @@ def predict():
 	testing_X = np.reshape(testing_X,(testing_X.shape[0],3,64,64))
 
 	print ('testing data loaded')	
-	############################################################################################################################
+	###############################################################
 
 	json_file = open('model.json', 'r')
 	loaded_model_json = json_file.read()
@@ -91,8 +91,29 @@ def predict():
 	print("Loaded model from disk")
 	target=loaded_model.predict(testing_X)
 	print(target[11000:11030,])
-	text_file = open("Output.txt", "w")
-	text_file.write(target)
+	#text_file = open("Output.txt", "w")
+	#text_file.write(target)
+	#text_file.close()
+	
+	################################################################
+
+	#saving to text file
+	text_file = open("Output_150107048.txt", "w")
+	for i in range(target.shape[0]):
+		text_file.write(str(target[i]))
+		text_file.write("\n")
+	text_file.close()
+
+	val = 0
+	text_file = open("Output_150107048_dc.txt", "w")
+	for i in range(target.shape[0]):
+		if (target [i,0]>=0.5 ):
+			val = 0
+		else :
+			val = 1
+
+		text_file.write(str(val))
+		text_file.write("\n")
 	text_file.close()
 
 if __name__ == '__main__':
